@@ -1,0 +1,40 @@
+CompletableFuture.runAsync(() -> {
+
+            var client = DynamoDbAsyncClient.builder().build();
+
+            var keyToGet = new HashMap<String, AttributeValue>();
+            keyToGet.put("id", AttributeValue.builder().s("1").build());
+            keyToGet.put("entry_time", AttributeValue.builder().s("entry_1").build());
+
+            var drq = GetItemRequest.builder().key(keyToGet).tableName("TABLE_1").build();
+
+            var f = client.getItem(drq);
+
+            f.thenAcceptAsync((res) -> {
+
+                System.out.println("Dynamoclient call completed");
+
+                var item = res.item();
+                var entry = item.get("id").s();
+
+                System.out.println("id = " + entry);
+
+                var values = item.values();
+                var map = values.stream().collect(Collectors.toMap(AttributeValue::s, s -> s));
+                var keys = map.keySet();
+                for (var sinKey : keys) {
+                    System.out.format("%s: %s\n", sinKey, map.get(sinKey).toString());
+                }
+
+                future.complete(entry);
+
+            }).exceptionally(e -> {
+                System.out.println("Exception caught ------------------------------------------------ ");
+                // future.completeExceptionally(new Exception("Wrong"));
+                future.complete("Something wrong");
+                return null;
+            });
+
+            System.out.println("Dynamoclient call scheduled");
+
+        });

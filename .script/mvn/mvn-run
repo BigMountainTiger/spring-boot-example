@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd spring-boot-example/
+mvn spring-boot:run -pl spring-boot-example-application

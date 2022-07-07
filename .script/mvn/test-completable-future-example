@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd spring-boot-example/
+mvn test -Dtest=CompletableFuture_auth_Test -pl completable-future-example
